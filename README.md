@@ -1,8 +1,6 @@
-# Как настроить Telegram API
+# Бот напоминалка
 
-1. В корне проекта создайте файл `.env`, если его нет.
-2. Добавьте строку:
+В файле: .env
+SQLITE_DATABASE=./database/database.sqlite
+TELEGRAM_BOT_TOKEN=токен_бота
 
-TELEGRAM_BOT_TOKEN=ваш_токен_бота
-
-3. Для примера, добавьте эту же строку в `.env.example`.
