@@ -34,7 +34,7 @@ class HandleEventsCommand extends Command
 
         $events = $event->select();
 
-        $eventSender = new EventSender();
+        $eventSender = new EventSender($this->app);
 
         foreach ($events as $event) {
 
