@@ -32,4 +32,5 @@ class TgEvents
         $this->oldMessages = $messages;
         $this->cache->set('tg_old_messages', $messages);
     }
+    // ... existing code ...
 } 
