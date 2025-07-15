@@ -1,35 +1,39 @@
 <?php
-namespace App\Actions;
+namespace App\EventSender;
 
-use Psr\SimpleCache\CacheInterface;
-
-class TgEvents
+class TelegramApi
 {
-    private int $offset;
-    private array $oldMessages;
-    private CacheInterface $cache;
+    private string $token;
+    private string $apiUrl;
 
-    public function __construct(
-        Cron $cron,
-        EventSaver $eventSaver,
-        TelegramApi $telegramApi,
-        EventSender $eventSender,
-        CacheInterface $cache
-    ) {
-        $this->cache = $cache;
-        $this->offset = $this->cache->get('tg_offset', 0);
-        $this->oldMessages = $this->cache->get('tg_old_messages', []);
+    public function __construct(string $token)
+    {
+        $this->token = $token;
+        $this->apiUrl = "https://api.telegram.org/bot{$token}/";
     }
 
-    public function setOffset(int $offset): void
+    public function sendMessage(string $receiver, string $message): array
     {
-        $this->offset = $offset;
-        $this->cache->set('tg_offset', $offset);
+        $url = $this->apiUrl . 'sendMessage';
+        $params = [
+            'chat_id' => $receiver,
+            'text' => $message
+        ];
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return json_decode($result, true);
     }
 
-    public function setOldMessages(array $messages): void
+    public function getMessages(): array
     {
-        $this->oldMessages = $messages;
-        $this->cache->set('tg_old_messages', $messages);
+        $url = $this->apiUrl . 'getUpdates';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return json_decode($result, true);
     }
 } 

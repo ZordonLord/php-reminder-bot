@@ -8,9 +8,12 @@ use App\Database\SQLite;
 
 use App\EventSender\EventSender;
 
+use App\EventSender\TelegramApi;
+
 use App\Models\Event;
 
-//use App\Models\EventDto;
+
+use App\Queue\QueueMock;
 
 class HandleEventsCommand extends Command
 
@@ -34,7 +37,9 @@ class HandleEventsCommand extends Command
 
         $events = $event->select();
 
-        $eventSender = new EventSender($this->app);
+        $telegramApi = new TelegramApi($this->app->env('TELEGRAM_BOT_TOKEN'));
+        $queue = new QueueMock();
+        $eventSender = new EventSender($telegramApi, $queue);
 
         foreach ($events as $event) {
 
